@@ -103,15 +103,18 @@ def authenticate(viewfunc):
         *s, request = args
         # print(request.META)
         header = request.META.get(AUTH_HEADER, '')
-        header = header.split('=')[-1]
+        # header = header.split('=')[-1]
 
         if not header:
             print('----------')
             return HttpResponse(status=401)
         try:
-            print('111')
-            payload = jwt.decode(header, settings.SECRET_KEY)
-            print('222')
+            payload = jwt.decode(
+                header,
+                settings.SECRET_KEY,
+                algorithms=['HS256'],
+                options={'verify_signature': True}
+            )
             print(payload, type(payload))
         except Exception as e:
             return HttpResponse(status=401)
