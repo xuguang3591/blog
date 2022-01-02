@@ -10,7 +10,7 @@ from django.conf import settings
 import jwt
 
 AUTH_EXPIRE = 8 * 60 * 60
-AUTH_HEADER = "HTTP_COOKIE"
+AUTH_HEADER = "HTTP_JWT"
 
 
 def get_token(user_id):
@@ -101,8 +101,8 @@ class BlogAuthMiddleware:
 def authenticate(viewfunc):
     def wrapper(*args):
         *s, request = args
-        # print(request.META)
         header = request.META.get(AUTH_HEADER, '')
+        print(header)
         # header = header.split('=')[-1]
 
         if not header:
