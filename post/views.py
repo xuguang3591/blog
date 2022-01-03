@@ -39,8 +39,22 @@ class PostView(View):
             return HttpResponse(status=400)
 
 
-
 @require_GET
 def getpost(request: HttpRequest, id):
-    print(id)
-    return JsonResponse({}, status=201)
+    try:
+        id = int(id)
+        post = Post.objects.get(pk=id)
+        print(post)
+        return JsonResponse({
+            'post': {
+                'id': post.id,
+                'title': post.title,
+                'author': post.author.name,
+                'author_id': post.author_id,
+                'postdate': post.postdate.timestamp(),
+                'content': post.content.content
+            }
+        }, status=201)
+    except Exception as e:
+        print(e)
+        return HttpResponse(status=404)
