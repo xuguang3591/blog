@@ -12,6 +12,30 @@ from utils import jsonify
 class PostView(View):
     def get(self, request: HttpRequest):
         print('get ~~~~~~~~~~~~~')
+        try:
+            page = int(request.GET.get('page', 1))
+            page = page if page > 0 else 1
+        except:
+            page = 1
+        try:
+            size = int(request.GET.get('size', 20))
+            size = size if size > 0 and size < 101 else 20
+        except:
+            size = 20
+        try:
+            start = (page - 1) * size
+            posts = Post.objects.order_by('pk')[start:start + size]
+            print(posts.query)
+
+            return JsonResponse({
+                'posts': [
+                    jsonify(post, allow=['id', 'title'])
+                    for post in posts
+                ]
+            })
+        except Exception as e:
+            print(e)
+            return HttpResponse(status=400)
 
     @authenticate
     def post(self, request: HttpRequest):
